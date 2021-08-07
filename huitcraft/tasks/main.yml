@@ -1,2 +1,16 @@
 ---
 # tasks file for huitcraft
+- name: All packages upgrade
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: Packages install
+  apt:
+    name:
+      - vim
+      - curl
+      - git
+      - docker
+      - docker-compose
+    state: latest
