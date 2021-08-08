@@ -2,6 +2,8 @@ version: "3.7"
 
 services:
   spigot:
+    build:
+      context: .
     ports:
       - "19132:19132"
       - "19133:19133"

@@ -16,5 +16,4 @@ WORKDIR /mc
 RUN echo 'eula=true' > eula.txt
 COPY --from=Builder /mcbuilder/spigot.jar .
 COPY --from=Builder /mcbuilder/Geyser-Spigot.jar ./plugins
-RUN pwd
 ENTRYPOINT [ "java", "-Xms1G", "-Xmx3G", "-XX:+UseG1GC", "-jar", "spigot.jar" ]
