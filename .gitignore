@@ -1,2 +1,6 @@
 inventory
 minecraft/*
+!minecraft/banned-*
+!minecraft/server.properties
+!minecraft/whitelist.json
+!minecraft/bukkit.yml
