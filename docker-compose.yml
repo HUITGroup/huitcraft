@@ -4,6 +4,8 @@ services:
   spigot:
     build:
       context: .
+    tty: true
+    stdin_open: true
     ports:
       - "19132:19132"
       - "19133:19133"

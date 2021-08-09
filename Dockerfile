@@ -13,7 +13,8 @@ RUN mv spigot-*.jar spigot.jar
 
 FROM openjdk:16.0.2 AS Runner
 WORKDIR /mc
-RUN echo 'eula=true' > eula.txt
-COPY --from=Builder /mcbuilder/spigot.jar .
-COPY --from=Builder /mcbuilder/Geyser-Spigot.jar ./plugins
-ENTRYPOINT [ "java", "-Xms1G", "-Xmx3G", "-XX:+UseG1GC", "-jar", "spigot.jar" ]
+RUN mkdir -p /mcbuilder/plugins /runtime
+COPY mcstart.sh /runtime
+COPY --from=Builder /mcbuilder/spigot.jar /mcbuilder
+COPY --from=Builder /mcbuilder/Geyser-Spigot.jar /mcbuilder/plugins
+ENTRYPOINT [ "/runtime/mcstart.sh" ]
