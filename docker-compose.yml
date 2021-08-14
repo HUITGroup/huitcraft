@@ -6,6 +6,7 @@ services:
       context: .
     tty: true
     stdin_open: true
+    restart: always
     ports:
       - "19132:19132/udp"
       - "19133:19133/udp"
