@@ -14,3 +14,7 @@ minecraft/help.yml
 minecraft/commands.yml
 minecraft/permissions.yml
 minecraft/plugins/floodgate/key.pem
+minecraft/version_history.json
+minecraft/papermc.jar
+minecraft/backup
+minecraft/cache
