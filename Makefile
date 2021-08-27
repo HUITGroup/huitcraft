@@ -15,9 +15,11 @@ SHELL=/bin/bash
 
 .PHONY: install
 install:
+	sudo apt update && sudo apt install -y openjdk-16-jre curl 
 	mkdir -p $(SYSTEMD_DIR)
 	cat <<"EOF" > $(SYSTEMD_DIR)/papermc.service
 ## fixme: [ ] が testコマンド扱いになって失敗するバグがある
+## fixme: プラグインやpapermcのインストールをしていない
 	[Unit]
 	Description=Minecraft Server
 	After=network-online.target
@@ -70,4 +72,5 @@ backup:
 update:
 	systemctl --user stop papermc
 	mv $(PROJECT_DIR)/papermc.jar $(PROJECT_DIR)/papermc.jar.bak
+## fixme: ファイル名の変更(papermc.jarに), プラグインの更新
 	curl -OL https://papermc.io/api/v2/projects/paper/versions/$(MC_VERSION)/builds/221/downloads/paper-$(MC_VERSION)-$(PAPERMC_VERSION).jar
