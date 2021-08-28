@@ -1,4 +1,4 @@
-PROJECT_DIR := $(CURDIR)
+PROJECT_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
 SYSTEMD_DIR := ~/.config/systemd/user
 
 MEM_MAX := 3G
@@ -17,37 +17,7 @@ SHELL=/bin/bash
 install:
 	sudo apt update && sudo apt install -y openjdk-16-jre curl 
 	mkdir -p $(SYSTEMD_DIR)
-	cat <<"EOF" > $(SYSTEMD_DIR)/papermc.service
-## fixme: [ ] が testコマンド扱いになって失敗するバグがある
-## fixme: プラグインやpapermcのインストールをしていない
-	[Unit]
-	Description=Minecraft Server
-	After=network-online.target
-	[Service]
-	TimeoutStopSec=120
-	WorkingDirectory=$(CUR_DIR)
-	ExecStart=/usr/bin/screen -Dm -S papermc /usr/bin/java -Xmx$(MEM_MAX) -Xms$(MEM_MIN) -jar $(CUR_DIR)/papermc.jar
-	ExecStop=/usr/bin/screen -S papermc -X stuff "say This server will be shutdown in 30s\015"
-	ExecStop=/bin/sleep 10
-	ExecStop=/usr/bin/screen -S papermc -X stuff "say This server will be shutdown in 20s\015"
-	ExecStop=/bin/sleep 10
-	ExecStop=/usr/bin/screen -S This server -X stuff "say This server will be shutdown in 10s\015"
-	ExecStop=/bin/sleep 5
-	ExecStop=/usr/bin/screen -S This server -X stuff "say This server will be shutdown in 5s\015"
-	ExecStop=/bin/sleep 5
-	ExecStop=/usr/bin/screen -S papermc -X stuff "save-all\015"
-	ExecStop=/usr/bin/screen -S papermc -X stuff "stop\015"
-	Restart=always
-	[Install]
-	WantedBy=multi-user.target
-	EOF
-
-	echo -n 'agree eula? [y/N]: '
-	read cmd
-	case $cmd in
-		"y" | "Y" | "yes" | "Yes" ) echo "eula=true" > $(CUR_DIR)/eula.txt && echo "install success!" ;;
-		*) echo "install failed" ;;
-	esac
+	bash $(PROJECT_DIR)/runtime/install.sh $(PROJECT_DIR) $(SYSTEMD_DIR) $(MC_VERSION) $(PAPERMC_VERSION) $(MEM_MAX) $(MEM_MIN)
 
 .PHONY: start
 start:
@@ -72,5 +42,9 @@ backup:
 update:
 	systemctl --user stop papermc
 	mv $(PROJECT_DIR)/papermc.jar $(PROJECT_DIR)/papermc.jar.bak
+	mv $(PROJECT_DIR)/floodgate-spigot.jar $(PROJECT_DIR)/floodgate-spigot.jar.bak
+	mv $(PROJECT_DIR)/Geyser-Spigot.jar $(PROJECT_DIR)/Geyser-Spigot.jar.bak
 ## fixme: ファイル名の変更(papermc.jarに), プラグインの更新
-	curl -OL https://papermc.io/api/v2/projects/paper/versions/$(MC_VERSION)/builds/221/downloads/paper-$(MC_VERSION)-$(PAPERMC_VERSION).jar
+	if [ ! -e $(PROJECT_DIR)/papermc.jar ]; then
+		curl -OL https://papermc.io/api/v2/projects/paper/versions/$(MC_VERSION)/builds/221/downloads/paper-$(MC_VERSION)-$(PAPERMC_VERSION).jar
+	fi
